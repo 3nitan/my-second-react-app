@@ -1,23 +1,63 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import Title from './components/Title';
+import Modal from './components/Modal';
+import EventList from './components/EventList';
+import NewEventForm from './components/NewEventForm';
 
 function App() {
+  const [showModal, setShowModal] = useState(false);
+  const [showEvents, setShowEvents] = useState(true);
+  const [events, setEvents] = useState([]);
+
+  const addEvent = (event) => {
+    setEvents((prevEvents) => {
+      return [...prevEvents, event];
+    });
+    setShowModal(false);
+  };
+
+  const handleClick = (id) => {
+    setEvents((prevEvents) => {
+      return events.filter((event) => {
+        return id !== event.id;
+      });
+    });
+    console.log(id);
+  };
+
+  const subtitle = 'All the latest events in Marioland';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Title title='Events in your Area' subtitle={subtitle} />
+
+      {showEvents && (
+        <div>
+          <button onClick={() => setShowEvents(false)}>hide events</button>
+        </div>
+      )}
+      {!showEvents && (
+        <div>
+          <button onClick={() => setShowEvents(true)}>show events</button>
+        </div>
+      )}
+      {showEvents && <EventList events={events} handleClick={handleClick} />}
+
+      {/* <Modal>
+        <h2>10% Off Coupon Code</h2>
+        <p>Use the code NINJA10 at the checkout</p>
+      </Modal> */}
+
+      {showModal && (
+        <Modal isSalesModal={true}>
+          <NewEventForm addEvent={addEvent} />
+        </Modal>
+      )}
+
+      <div>
+        <button onClick={() => setShowModal(true)}>Add New Event</button>
+      </div>
     </div>
   );
 }
